@@ -1,18 +1,34 @@
 <?php
   
-  if($_SERVER["REQUEST_METHOD"]== "POST"){
     // include the dbconnect.php file inside here 
     require 'dbConnect.php';
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $cpassword = $_POST['cpassword'];
+    if (isset($_REQUEST['username'])) {
+    //remove back slash
+    $username= stripslashes($_REQUEST['username']);
+    //escape special characters in a string.
+    $username = mysqli_real_escape_string($conn, $username);
+    // $email = stripslashes($_REQUEST['email']);
+    // $email = mysqli_real_escape_string($conn, $email);
 
-    $sql = "SELECT * From users_table where username = '$username'";
-    $result = mysqli_query($conn,$sql);
-    
-  }
+    $password = stripslashes($_REQUEST['password']);
+    $password = mysqli_real_escape_string($conn, $password);
 
-?>
+    $cpassword = stripslashes($_REQUEST['psw-repeat']);
+    $cpassword = mysqli_real_escape_string($conn, $password);
+
+    $trn_date = date("Y-m-d H:i:s");
+    $query = "INSERT into `users` (username, password, cpassword, trn_date)
+    VALUES('$username', '.md5($password).','$cpassword', '$trn_date')";
+    $result = mysqli_query($conn, $query);
+    if($result){
+        echo "<h3>You are registered successfully.</h3>";
+    }else{
+        
+    }
+    }
+    ?>
+
+
 
 
 
@@ -34,11 +50,11 @@
             <p>Please fill in this form to create an account.</p>
             <hr>
 
-            <label for="email"><b>Email</b></label>
+            <label for="usernme"><b>UserName</b></label>
             <input type="text" placeholder="Enter Username" name="username" id="username" required>
 
             <label for="psw">Password</label>
-            <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+            <input type="password" placeholder="Enter Password" name="password" id="password" required>
 
             <label for="psw-repeat">
                 <b>Repeat Password</b>
@@ -49,13 +65,12 @@
 
             <p>By creating an account you agree to our <a href="#">Terms & Priivacy</a></p>
 
-            <button type="button" class="registerbtn">Register</button>
+            <input type="submit" class="registerbtn" name="submit" value="Register">
         </div>
 
-        <div class="container signin">
-            <p>already have an account? <a href="#">Sign in</a></p>
-        </div>
+        <!-- <div class="container signin">
+        </div> -->
     </form>
-</body>
+ </body>
 
 </html>
